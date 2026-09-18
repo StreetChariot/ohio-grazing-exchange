@@ -13,18 +13,22 @@ npm run dev
 
 The dev server listens on [http://127.0.0.1:47281](http://127.0.0.1:47281).
 
-Browse works immediately on ten fictional Ohio listings. Posting a listing writes `data/posted-listings.json` on this machine. That file is gitignored.
+With the Supabase variables below set, browse and post use the hosted database. Without them, browse uses the ten sample listings in the repo and posts stay in gitignored `data/posted-listings.json`.
 
 ## Supabase
 
+Hosted project `ohio-grazing-exchange` (ref `dxlasbqakpstfsxyrgvf`) in `us-east-2`:
+
+https://dxlasbqakpstfsxyrgvf.supabase.co
+
+The organization is on the Pro plan, which launches new projects on Micro compute (about $10/month). This project is separate from the other apps in that org. The listings migration, row level security, and ten sample rows are already applied.
+
 Copy `.env.example` to `.env.local` and set:
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_SUPABASE_URL` to the project URL above
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from the Supabase dashboard (publishable key, not the secret)
 
-Do not put the secret key in either variable. With those two set, browse and post use the `listings` table. Without them, the app stays on the local sample set.
-
-Schema and sample rows are in `supabase/migrations`. A hosted project was not created: the organization is on the Pro plan, existing projects belong to other apps, and a new project is a paid monthly charge. Apply the migration only after that project exists. The intended compute size is Micro.
+`.env.local` is gitignored. Do not commit keys. Without those two variables, the app stays on the local sample set and writes posts to `data/posted-listings.json`.
 
 Anonymous clients can read and insert listings. They cannot update or delete. That matches this first slice, which has no accounts. Contact details are visible on the listing page.
 
