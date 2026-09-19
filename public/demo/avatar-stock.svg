@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="DEMO livestock host avatar">
+  <rect width="320" height="320" fill="#5a4632"/>
+  <circle cx="160" cy="118" r="48" fill="#e8dcc8"/>
+  <ellipse cx="160" cy="250" rx="88" ry="70" fill="#e8dcc8"/>
+  <rect x="12" y="12" width="72" height="28" rx="4" fill="#b42318"/>
+  <text x="48" y="32" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif" font-size="14" font-weight="700">DEMO</text>
+</svg>

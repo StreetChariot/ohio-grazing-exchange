@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="DEMO farm logo">
+  <rect width="160" height="160" rx="12" fill="#2f4a2e"/>
+  <path d="M28 108 L80 36 L132 108 Z" fill="#d7e4c8"/>
+  <rect x="68" y="88" width="24" height="28" fill="#5a4632"/>
+  <rect x="10" y="10" width="56" height="22" rx="3" fill="#b42318"/>
+  <text x="38" y="26" text-anchor="middle" fill="#fff" font-family="system-ui,sans-serif" font-size="12" font-weight="700">DEMO</text>
+</svg>
