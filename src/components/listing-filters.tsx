@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,8 +19,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { OHIO_COUNTIES } from "@/lib/counties";
-import { filtersToSearchParams } from "@/lib/filters";
+import { countiesForState } from "@/lib/region-counties";
+import { SERVICE_STATES } from "@/lib/region";
 import {
   LAND_TYPE_LABELS,
   LIVESTOCK_LABELS,
@@ -41,44 +40,18 @@ function choice(value: string | undefined) {
 }
 
 export function ListingFilters({
-  defaults,
-  onApplied,
+  filters,
+  onChange,
 }: {
-  defaults: ListingFilters;
-  onApplied?: () => void;
+  filters: ListingFilters;
+  onChange: (next: ListingFilters) => void;
 }) {
-  const router = useRouter();
-  const [side, setSide] = useState(choice(defaults.side));
-  const [county, setCounty] = useState(choice(defaults.county));
-  const [livestock, setLivestock] = useState(choice(defaults.livestockType));
-  const [landType, setLandType] = useState(choice(defaults.landType));
-  const [season, setSeason] = useState(choice(defaults.season));
-  const [onDate, setOnDate] = useState(defaults.onDate ?? "");
-
-  function apply() {
-    const params = filtersToSearchParams({
-      side: side === "any" ? undefined : (side as ListingFilters["side"]),
-      county: county === "any" ? undefined : county,
-      livestockType:
-        livestock === "any" ? undefined : (livestock as ListingFilters["livestockType"]),
-      landType: landType === "any" ? undefined : (landType as ListingFilters["landType"]),
-      season: season === "any" ? undefined : (season as ListingFilters["season"]),
-      onDate: onDate || undefined,
-    });
-    const query = params.toString();
-    router.push(query ? `/listings?${query}` : "/listings");
-    onApplied?.();
-  }
+  const stateChosen = Boolean(filters.state);
+  const counties = countiesForState(filters.state);
+  const dateId = useId();
 
   function clear() {
-    setSide("any");
-    setCounty("any");
-    setLivestock("any");
-    setLandType("any");
-    setSeason("any");
-    setOnDate("");
-    router.push("/listings");
-    onApplied?.();
+    onChange({});
   }
 
   return (
@@ -86,12 +59,19 @@ export function ListingFilters({
       className="grid gap-4"
       onSubmit={(event) => {
         event.preventDefault();
-        apply();
       }}
     >
       <div className="grid gap-1.5">
         <Label>Listing side</Label>
-        <Select value={side} onValueChange={setSide}>
+        <Select
+          value={choice(filters.side)}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              side: value === "any" ? undefined : (value as ListingFilters["side"]),
+            })
+          }
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Any side" />
           </SelectTrigger>
@@ -106,24 +86,71 @@ export function ListingFilters({
         </Select>
       </div>
       <div className="grid gap-1.5">
-        <Label>Ohio county</Label>
-        <Select value={county} onValueChange={setCounty}>
+        <Label>State</Label>
+        <Select
+          value={choice(filters.state)}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              state: value === "any" ? undefined : (value as ListingFilters["state"]),
+              county: undefined,
+            })
+          }
+        >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Any county" />
+            <SelectValue placeholder="Any state" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="any">Any county</SelectItem>
-            {OHIO_COUNTIES.map((item) => (
-              <SelectItem key={item.name} value={item.name}>
-                {item.name}
+            <SelectItem value="any">Any state</SelectItem>
+            {SERVICE_STATES.map((value) => (
+              <SelectItem key={value} value={value}>
+                {value}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
       <div className="grid gap-1.5">
+        <Label>County</Label>
+        <Select
+          key={filters.state ?? "any"}
+          value={choice(filters.county)}
+          disabled={!stateChosen}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              county: value === "any" ? undefined : value,
+            })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={stateChosen ? "Any county" : "Choose a state first"} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">{stateChosen ? "Any county" : "Choose a state first"}</SelectItem>
+            {counties.map((name) => (
+              <SelectItem key={name} value={name}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {stateChosen ? null : (
+          <p className="text-xs text-muted-foreground">Choose a state to pick a county.</p>
+        )}
+      </div>
+      <div className="grid gap-1.5">
         <Label>Livestock type</Label>
-        <Select value={livestock} onValueChange={setLivestock}>
+        <Select
+          value={choice(filters.livestockType)}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              livestockType:
+                value === "any" ? undefined : (value as ListingFilters["livestockType"]),
+            })
+          }
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Any livestock" />
           </SelectTrigger>
@@ -139,7 +166,15 @@ export function ListingFilters({
       </div>
       <div className="grid gap-1.5">
         <Label>Forage</Label>
-        <Select value={landType} onValueChange={setLandType}>
+        <Select
+          value={choice(filters.landType)}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              landType: value === "any" ? undefined : (value as ListingFilters["landType"]),
+            })
+          }
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Any forage" />
           </SelectTrigger>
@@ -155,7 +190,15 @@ export function ListingFilters({
       </div>
       <div className="grid gap-1.5">
         <Label>Season</Label>
-        <Select value={season} onValueChange={setSeason}>
+        <Select
+          value={choice(filters.season)}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              season: value === "any" ? undefined : (value as ListingFilters["season"]),
+            })
+          }
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Any season" />
           </SelectTrigger>
@@ -170,27 +213,33 @@ export function ListingFilters({
         </Select>
       </div>
       <div className="grid gap-1.5">
-        <Label htmlFor="onDate">Available on</Label>
+        <Label htmlFor={dateId}>Available on</Label>
         <Input
-          id="onDate"
+          id={dateId}
           type="date"
-          value={onDate}
-          onChange={(event) => setOnDate(event.target.value)}
+          value={filters.onDate ?? ""}
+          onChange={(event) =>
+            onChange({
+              ...filters,
+              onDate: event.target.value || undefined,
+            })
+          }
         />
       </div>
-      <div className="flex gap-2">
-        <Button type="submit" className="flex-1">
-          Apply
-        </Button>
-        <Button type="button" variant="outline" onClick={clear}>
-          Clear
-        </Button>
-      </div>
+      <Button type="button" variant="outline" onClick={clear}>
+        Clear
+      </Button>
     </form>
   );
 }
 
-export function MobileFilters({ defaults }: { defaults: ListingFilters }) {
+export function MobileFilters({
+  filters,
+  onChange,
+}: {
+  filters: ListingFilters;
+  onChange: (next: ListingFilters) => void;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -205,7 +254,7 @@ export function MobileFilters({ defaults }: { defaults: ListingFilters }) {
           <SheetTitle>Filter listings</SheetTitle>
         </SheetHeader>
         <div className="px-4 pb-6">
-          <ListingFilters defaults={defaults} onApplied={() => setOpen(false)} />
+          <ListingFilters filters={filters} onChange={onChange} />
         </div>
       </SheetContent>
     </Sheet>

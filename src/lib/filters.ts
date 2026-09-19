@@ -7,7 +7,8 @@ import type {
   Season,
 } from "./types";
 import { LAND_TYPES, LISTING_SIDES, LIVESTOCK_TYPES, SEASONS } from "./types";
-import { isOhioCounty } from "./counties";
+import { isCountyInState } from "./region-counties";
+import { isServiceState } from "./region";
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -24,10 +25,13 @@ export function parseFilters(
   params: Record<string, string | string[] | undefined>,
 ): ListingFilters {
   const county = one(params.county);
+  const region = one(params.state);
   const onDate = one(params.onDate);
   return {
     side: asEnum<ListingSide>(one(params.side), LISTING_SIDES),
-    county: county && isOhioCounty(county) ? county : undefined,
+    state: isServiceState(region) ? region : undefined,
+    county:
+      isServiceState(region) && county && isCountyInState(region, county) ? county : undefined,
     livestockType: asEnum<LivestockType>(one(params.livestock), LIVESTOCK_TYPES),
     landType: asEnum<LandType>(one(params.landType), LAND_TYPES),
     season: asEnum<Season>(one(params.season), SEASONS),
@@ -41,6 +45,7 @@ export function hasActiveFilters(filters: ListingFilters) {
 
 export function matchesListing(listing: Listing, filters: ListingFilters) {
   if (filters.side && listing.side !== filters.side) return false;
+  if (filters.state && listing.state !== filters.state) return false;
   if (filters.county && listing.county !== filters.county) return false;
   if (filters.livestockType && listing.livestockType !== filters.livestockType) {
     return false;
@@ -58,6 +63,7 @@ export function matchesListing(listing: Listing, filters: ListingFilters) {
 export function filtersToSearchParams(filters: ListingFilters) {
   const params = new URLSearchParams();
   if (filters.side) params.set("side", filters.side);
+  if (filters.state) params.set("state", filters.state);
   if (filters.county) params.set("county", filters.county);
   if (filters.livestockType) params.set("livestock", filters.livestockType);
   if (filters.landType) params.set("landType", filters.landType);

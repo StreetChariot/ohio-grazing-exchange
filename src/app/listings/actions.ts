@@ -2,8 +2,10 @@
 
 import { redirect, unstable_rethrow } from "next/navigation";
 import { z } from "zod";
+import { getAccount } from "@/lib/auth";
 import { isOhioCounty } from "@/lib/counties";
-import { createListing } from "@/lib/listings";
+import { createListing, deleteListing } from "@/lib/listings";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 import {
   FENCING_OPTIONS,
   LAND_TYPES,
@@ -152,29 +154,38 @@ export async function createListingAction(
     };
   }
 
+  const account = await getAccount();
+  if (isSupabaseConfigured() && !account) {
+    redirect("/sign-in?next=/listings/new");
+  }
+
   const value = parsed.data;
   try {
-    const listing = await createListing({
-      side: value.side,
-      title: value.title,
-      county: value.county,
-      nearestTown: value.nearestTown,
-      landType: value.side === "land" ? value.landType ?? null : value.landType ?? null,
-      livestockType: value.livestockType,
-      seasons: value.seasons,
-      availableFrom: value.availableFrom,
-      availableUntil: value.availableUntil,
-      acres: value.side === "land" ? value.acres : null,
-      headCount: value.side === "livestock" ? value.headCount : null,
-      travelRadiusMiles: value.side === "livestock" ? value.travelRadiusMiles : null,
-      fencing: value.side === "land" ? value.fencing : null,
-      waterAvailable: value.side === "land" ? value.waterAvailable : null,
-      rateNotes: value.rateNotes,
-      description: value.description,
-      contactName: value.contactName,
-      contactEmail: value.contactEmail,
-      contactPhone: value.contactPhone,
-    });
+    const listing = await createListing(
+      {
+        side: value.side,
+        title: value.title,
+        state: "Ohio",
+        county: value.county,
+        nearestTown: value.nearestTown,
+        landType: value.side === "land" ? value.landType ?? null : value.landType ?? null,
+        livestockType: value.livestockType,
+        seasons: value.seasons,
+        availableFrom: value.availableFrom,
+        availableUntil: value.availableUntil,
+        acres: value.side === "land" ? value.acres : null,
+        headCount: value.side === "livestock" ? value.headCount : null,
+        travelRadiusMiles: value.side === "livestock" ? value.travelRadiusMiles : null,
+        fencing: value.side === "land" ? value.fencing : null,
+        waterAvailable: value.side === "land" ? value.waterAvailable : null,
+        rateNotes: value.rateNotes,
+        description: value.description,
+        contactName: value.contactName,
+        contactEmail: value.contactEmail,
+        contactPhone: value.contactPhone,
+      },
+      account?.id ?? null,
+    );
     redirect(`/listings/${listing.id}`);
   } catch (error) {
     unstable_rethrow(error);
@@ -186,4 +197,20 @@ export async function createListingAction(
       fieldErrors: {},
     };
   }
+}
+
+export async function deleteListingAction(formData: FormData) {
+  const account = await getAccount();
+  if (isSupabaseConfigured() && !account) {
+    redirect("/sign-in");
+  }
+  const id = text(formData, "id");
+  const next = text(formData, "next") || "/account";
+  try {
+    await deleteListing(id);
+  } catch (error) {
+    unstable_rethrow(error);
+    throw error instanceof Error ? error : new Error("The listing could not be removed.");
+  }
+  redirect(next.startsWith("/") && !next.startsWith("//") ? next : "/account");
 }

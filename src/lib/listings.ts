@@ -3,8 +3,10 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { countyCentroid } from "./counties";
 import { matchesListing } from "./filters";
+import { isServiceState } from "./region";
 import { sampleListings } from "./sample-listings";
-import { getSupabase, isSupabaseConfigured } from "./supabase";
+import { isSupabaseConfigured } from "./supabase/env";
+import { createClient } from "./supabase/server";
 import type { Listing, ListingFilters, ListingInput } from "./types";
 
 const postedFile = path.join(process.cwd(), "data", "posted-listings.json");
@@ -13,6 +15,7 @@ type ListingRow = {
   id: string;
   side: Listing["side"];
   title: string;
+  state?: string;
   county: string;
   nearest_town: string;
   latitude: number;
@@ -29,17 +32,26 @@ type ListingRow = {
   water_available: boolean | null;
   rate_notes: string | null;
   description: string;
-  contact_name: string;
-  contact_email: string;
-  contact_phone: string | null;
+  owner_id?: string | null;
+  contact_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
   created_at: string;
 };
 
-function fromRow(row: ListingRow): Listing {
+type ContactRow = {
+  listing_id: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string | null;
+};
+
+function fromRow(row: ListingRow, contact?: ContactRow | null): Listing {
   return {
     id: row.id,
     side: row.side,
     title: row.title,
+    state: isServiceState(row.state) ? row.state : "Ohio",
     county: row.county,
     nearestTown: row.nearest_town,
     latitude: row.latitude,
@@ -56,9 +68,10 @@ function fromRow(row: ListingRow): Listing {
     waterAvailable: row.water_available,
     rateNotes: row.rate_notes,
     description: row.description,
-    contactName: row.contact_name,
-    contactEmail: row.contact_email,
-    contactPhone: row.contact_phone,
+    ownerId: row.owner_id ?? null,
+    contactName: contact?.contact_name ?? row.contact_name ?? null,
+    contactEmail: contact?.contact_email ?? row.contact_email ?? null,
+    contactPhone: contact?.contact_phone ?? row.contact_phone ?? null,
     createdAt: row.created_at,
   };
 }
@@ -68,6 +81,7 @@ function toInsert(listing: Listing) {
     id: listing.id,
     side: listing.side,
     title: listing.title,
+    state: listing.state,
     county: listing.county,
     nearest_town: listing.nearestTown,
     latitude: listing.latitude,
@@ -84,9 +98,7 @@ function toInsert(listing: Listing) {
     water_available: listing.waterAvailable,
     rate_notes: listing.rateNotes,
     description: listing.description,
-    contact_name: listing.contactName,
-    contact_email: listing.contactEmail,
-    contact_phone: listing.contactPhone,
+    owner_id: listing.ownerId,
   };
 }
 
@@ -94,7 +106,12 @@ async function readPosted(): Promise<Listing[]> {
   try {
     const raw = await readFile(postedFile, "utf8");
     const parsed = JSON.parse(raw) as Listing[];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((listing) => ({
+      ...listing,
+      state: isServiceState(listing.state) ? listing.state : "Ohio",
+      ownerId: listing.ownerId ?? null,
+    }));
   } catch {
     return [];
   }
@@ -124,13 +141,10 @@ export async function listListings(filters: ListingFilters = {}) {
     return listings.filter((listing) => matchesListing(listing, filters));
   }
 
-  const supabase = getSupabase();
-  if (!supabase) {
-    throw new Error("Supabase is configured but the client could not start.");
-  }
-
+  const supabase = await createClient();
   let query = supabase.from("listings").select("*").order("created_at", { ascending: false });
   if (filters.side) query = query.eq("side", filters.side);
+  if (filters.state) query = query.eq("state", filters.state);
   if (filters.county) query = query.eq("county", filters.county);
   if (filters.livestockType) query = query.eq("livestock_type", filters.livestockType);
   if (filters.landType) query = query.eq("land_type", filters.landType);
@@ -143,7 +157,7 @@ export async function listListings(filters: ListingFilters = {}) {
   if (error) {
     throw new Error(error.message);
   }
-  return (data as ListingRow[]).map(fromRow);
+  return (data as ListingRow[]).map((row) => fromRow(row));
 }
 
 export async function getListing(id: string) {
@@ -154,32 +168,60 @@ export async function getListing(id: string) {
     return listings.find((listing) => listing.id === id) ?? null;
   }
 
-  const supabase = getSupabase();
-  if (!supabase) {
-    throw new Error("Supabase is configured but the client could not start.");
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("listings").select("*").eq("id", id).maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  const { data: contact } = await supabase
+    .from("listing_contacts")
+    .select("*")
+    .eq("listing_id", id)
+    .maybeSingle();
+
+  return fromRow(data as ListingRow, (contact as ContactRow | null) ?? null);
+}
+
+export async function listOwnedListings(ownerId: string) {
+  if (!isSupabaseConfigured()) {
+    const listings = await localListings();
+    return listings.filter((listing) => listing.ownerId === ownerId);
   }
 
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
     .select("*")
-    .eq("id", id)
-    .maybeSingle();
-
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return data ? fromRow(data as ListingRow) : null;
+  return (data as ListingRow[]).map((row) => fromRow(row));
 }
 
-export async function createListing(input: ListingInput) {
+export async function listProfiles() {
+  if (!isSupabaseConfigured()) return [];
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, display_name, role, created_at")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function createListing(input: ListingInput, ownerId: string | null) {
   const county = countyCentroid(input.county);
   if (!county) {
-    throw new Error("Choose an Ohio county.");
+    throw new Error("Choose a county.");
   }
 
   const listing: Listing = {
     ...input,
+    state: input.state ?? "Ohio",
     id: randomUUID(),
     latitude: county.latitude,
     longitude: county.longitude,
+    ownerId,
     createdAt: new Date().toISOString(),
   };
 
@@ -189,11 +231,11 @@ export async function createListing(input: ListingInput) {
     return listing;
   }
 
-  const supabase = getSupabase();
-  if (!supabase) {
-    throw new Error("Supabase is configured but the client could not start.");
+  if (!ownerId) {
+    throw new Error("Sign in to post a listing.");
   }
 
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("listings")
     .insert(toInsert(listing))
@@ -201,5 +243,39 @@ export async function createListing(input: ListingInput) {
     .single();
 
   if (error) throw new Error(error.message);
-  return fromRow(data as ListingRow);
+
+  const { error: contactError } = await supabase.from("listing_contacts").insert({
+    listing_id: listing.id,
+    contact_name: input.contactName,
+    contact_email: input.contactEmail,
+    contact_phone: input.contactPhone,
+  });
+
+  if (contactError) {
+    await supabase.from("listings").delete().eq("id", listing.id);
+    throw new Error(contactError.message);
+  }
+
+  return fromRow(data as ListingRow, {
+    listing_id: listing.id,
+    contact_name: input.contactName ?? "",
+    contact_email: input.contactEmail ?? "",
+    contact_phone: input.contactPhone,
+  });
+}
+
+export async function deleteListing(id: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) {
+    throw new Error("That listing could not be found.");
+  }
+
+  if (!isSupabaseConfigured()) {
+    const posted = await readPosted();
+    await writePosted(posted.filter((listing) => listing.id !== id));
+    return;
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("listings").delete().eq("id", id);
+  if (error) throw new Error(error.message);
 }

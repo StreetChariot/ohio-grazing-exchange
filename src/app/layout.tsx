@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getAccount } from "@/lib/auth";
+import { PRODUCT_NAME } from "@/lib/region";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,21 +18,22 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Ohio Grazing Exchange",
-    template: "%s · Ohio Grazing Exchange",
+    default: PRODUCT_NAME,
+    template: `%s · ${PRODUCT_NAME}`,
   },
   description:
-    "Match Ohio landowners who have pasture, cover crops, or residue with livestock producers who need grazing.",
+    "Match landowners and livestock producers across Ohio, Pennsylvania, Kentucky, and West Virginia.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const account = await getAccount();
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <SiteHeader />
+        <SiteHeader account={account} />
         <div className="flex-1">{children}</div>
         <SiteFooter />
       </body>

@@ -30,7 +30,12 @@ Copy `.env.example` to `.env.local` and set:
 
 `.env.local` is gitignored. Do not commit keys. Without those two variables, the app stays on the local sample set and writes posts to `data/posted-listings.json`.
 
-Anonymous clients can read and insert listings. They cannot update or delete. That matches this first slice, which has no accounts. Contact details are visible on the listing page.
+Anonymous clients can read listings. Contact details, posting, and listing
+edits require a signed-in member. Hosts (admins) can remove any listing.
+
+Create a member at `/sign-up`. The email `streetchariot@hotmail.com` is on the
+host allowlist and becomes an admin on first sign-up. Other hosts can be added
+in `public.admin_allowlist`.
 
 ## What you can do
 

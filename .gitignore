@@ -40,6 +40,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated map source downloads
+/scripts/cache
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

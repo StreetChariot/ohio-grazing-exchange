@@ -1,3 +1,5 @@
+import type { ServiceState } from "./region";
+
 export const LISTING_SIDES = ["land", "livestock"] as const;
 export const LAND_TYPES = [
   "pasture",
@@ -27,6 +29,7 @@ export type Listing = {
   id: string;
   side: ListingSide;
   title: string;
+  state: ServiceState;
   county: string;
   nearestTown: string;
   latitude: number;
@@ -43,14 +46,16 @@ export type Listing = {
   waterAvailable: boolean | null;
   rateNotes: string | null;
   description: string;
-  contactName: string;
-  contactEmail: string;
+  ownerId: string | null;
+  contactName: string | null;
+  contactEmail: string | null;
   contactPhone: string | null;
   createdAt: string;
 };
 
 export type ListingFilters = {
   side?: ListingSide;
+  state?: ServiceState;
   county?: string;
   livestockType?: LivestockType;
   landType?: LandType;
@@ -61,6 +66,7 @@ export type ListingFilters = {
 export type ListingInput = {
   side: ListingSide;
   title: string;
+  state: ServiceState;
   county: string;
   nearestTown: string;
   landType: LandType | null;

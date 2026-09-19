@@ -10,7 +10,7 @@ export default function NotFound() {
           <CardTitle>Page not found</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 text-sm text-muted-foreground">
-          <p>That address is not part of the Ohio Grazing Exchange.</p>
+          <p>That address is not part of the Ohio Valley Grazing Exchange.</p>
           <Button asChild>
             <Link href="/">Go home</Link>
           </Button>

@@ -20,7 +20,9 @@ export function ListingCard({ listing }: { listing: Listing }) {
             <Badge variant={listing.side === "land" ? "default" : "secondary"}>
               {SIDE_LABELS[listing.side]}
             </Badge>
-            <Badge variant="outline">{listing.county} County</Badge>
+            <Badge variant="outline">
+              {listing.county} County, {listing.state}
+            </Badge>
           </div>
           <CardTitle className="text-base leading-snug">{listing.title}</CardTitle>
         </CardHeader>

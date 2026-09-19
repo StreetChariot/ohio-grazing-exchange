@@ -38,7 +38,11 @@ function FieldError({ message }: { message?: string }) {
   return <p className="text-sm text-destructive">{message}</p>;
 }
 
-export function ListingForm() {
+export function ListingForm({
+  defaults,
+}: {
+  defaults?: { contactName?: string; contactEmail?: string };
+}) {
   const [state, action, pending] = useActionState(createListingAction, initialState);
   const [side, setSide] = useState<ListingSide>("land");
   const [county, setCounty] = useState(OHIO_COUNTIES[0]?.name ?? "Adams");
@@ -101,7 +105,7 @@ export function ListingForm() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-1.5">
-          <Label>Ohio county</Label>
+          <Label>County</Label>
           <Select value={county} onValueChange={setCounty}>
             <SelectTrigger className="w-full">
               <SelectValue />
@@ -249,12 +253,12 @@ export function ListingForm() {
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="grid gap-1.5">
           <Label htmlFor="contactName">Contact name</Label>
-          <Input id="contactName" name="contactName" required aria-invalid={Boolean(state.fieldErrors.contactName)} />
+          <Input id="contactName" name="contactName" required defaultValue={defaults?.contactName} aria-invalid={Boolean(state.fieldErrors.contactName)} />
           <FieldError message={state.fieldErrors.contactName} />
         </div>
         <div className="grid gap-1.5">
           <Label htmlFor="contactEmail">Email</Label>
-          <Input id="contactEmail" name="contactEmail" type="email" required aria-invalid={Boolean(state.fieldErrors.contactEmail)} />
+          <Input id="contactEmail" name="contactEmail" type="email" required defaultValue={defaults?.contactEmail} aria-invalid={Boolean(state.fieldErrors.contactEmail)} />
           <FieldError message={state.fieldErrors.contactEmail} />
         </div>
         <div className="grid gap-1.5">
