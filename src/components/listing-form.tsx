@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { OHIO_COUNTIES } from "@/lib/counties";
+import { CERTIFIERS } from "@/lib/certifiers";
 import {
   FENCING_LABELS,
   LAND_TYPE_LABELS,
@@ -50,6 +51,8 @@ export function ListingForm({
   const [livestockType, setLivestockType] = useState<string>(LIVESTOCK_TYPES[0]);
   const [fencing, setFencing] = useState<string>("perimeter");
   const [waterAvailable, setWaterAvailable] = useState("yes");
+  const [organicCertified, setOrganicCertified] = useState("no");
+  const [organicCertifier, setOrganicCertifier] = useState<string>("oeffa");
 
   return (
     <form action={action} className="grid gap-5">
@@ -94,6 +97,10 @@ export function ListingForm({
             ))}
           </SelectContent>
         </Select>
+        <p className="text-sm text-muted-foreground">
+          One listing, one side. The same account can post both forage and
+          livestock over time — set both roles on your profile.
+        </p>
         <FieldError message={state.fieldErrors.side} />
       </div>
 
@@ -238,6 +245,53 @@ export function ListingForm({
           </div>
         </div>
       )}
+
+      <div className="grid gap-1.5">
+        <Label>Organic certification</Label>
+        <Select value={organicCertified} onValueChange={setOrganicCertified}>
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="no">
+              {side === "land" ? "Not certified organic" : "Herd is not organic"}
+            </SelectItem>
+            <SelectItem value="yes">
+              {side === "land"
+                ? "Certified organic pasture / forage"
+                : "Organic certified herd"}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <input type="hidden" name="organicCertified" value={organicCertified} />
+        {organicCertified === "yes" ? (
+          <>
+            <Label className="mt-2">Certifying agent</Label>
+            <input type="hidden" name="organicCertifier" value={organicCertifier} />
+            <Select value={organicCertifier} onValueChange={setOrganicCertifier}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose certifier" />
+              </SelectTrigger>
+              <SelectContent>
+                {CERTIFIERS.map((certifier) => (
+                  <SelectItem key={certifier.slug} value={certifier.slug}>
+                    {certifier.shortName}
+                    {certifier.regional ? " · Valley regional" : ""}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </>
+        ) : (
+          <input type="hidden" name="organicCertifier" value="" />
+        )}
+        <p className="text-sm text-muted-foreground">
+          {side === "land"
+            ? "Mark only the acres in this listing. A farm with both organic and conventional ground should post them as separate listings so each match stays attestation-safe."
+            : "Mark only the herd in this listing. A farm with both organic and conventional stock should post them separately so organic animals never graze conventional forage in a logged match."}
+        </p>
+        <FieldError message={state.fieldErrors.organicCertifier} />
+      </div>
 
       <div className="grid gap-1.5">
         <Label htmlFor="rateNotes">Rate notes</Label>

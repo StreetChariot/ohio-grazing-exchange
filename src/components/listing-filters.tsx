@@ -226,6 +226,26 @@ export function ListingFilters({
           }
         />
       </div>
+      <div className="grid gap-1.5">
+        <Label>Organic</Label>
+        <Select
+          value={filters.organicOnly ? "organic" : "any"}
+          onValueChange={(value) =>
+            onChange({
+              ...filters,
+              organicOnly: value === "organic" ? true : undefined,
+            })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Any certification" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="any">Any certification</SelectItem>
+            <SelectItem value="organic">Organic only</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <Button type="button" variant="outline" onClick={clear}>
         Clear
       </Button>

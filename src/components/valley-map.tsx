@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Minus, Plus, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SIDE_LABELS } from "@/lib/labels";
+import { listingDisplayTitle } from "@/lib/organic";
 import { projectValley } from "@/lib/valley-project";
 import {
   VALLEY_HEIGHT,
@@ -349,7 +350,7 @@ export function ValleyMap({ listings }: { listings: Listing[] }) {
                   key={listing.id}
                   role="link"
                   tabIndex={0}
-                  aria-label={`${SIDE_LABELS[listing.side]} in ${listing.county} County, ${listing.state}: ${listing.title}`}
+                  aria-label={`${SIDE_LABELS[listing.side]} in ${listing.county} County, ${listing.state}: ${listingDisplayTitle(listing)}`}
                   transform={`translate(${point.x} ${point.y}) scale(${1 / view.k})`}
                   className="cursor-pointer"
                   onClick={() => router.push(`/listings/${listing.id}`)}
@@ -360,7 +361,7 @@ export function ValleyMap({ listings }: { listings: Listing[] }) {
                   }}
                 >
                   <title>
-                    {`${SIDE_LABELS[listing.side]} · ${listing.county} County, ${listing.state}: ${listing.title}`}
+                    {`${SIDE_LABELS[listing.side]} · ${listing.county} County, ${listing.state}: ${listingDisplayTitle(listing)}`}
                   </title>
                   <circle r={12} fill="transparent" />
                   <circle

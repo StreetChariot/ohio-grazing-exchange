@@ -35,6 +35,16 @@ export const FENCING_LABELS: Record<Fencing, string> = {
   perimeter: "Perimeter fence",
 };
 
+export function formatPosted(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return formatDate(iso.slice(0, 10));
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
 export function formatDate(iso: string) {
   const [year, month, day] = iso.split("-").map(Number);
   return new Intl.DateTimeFormat("en-US", {

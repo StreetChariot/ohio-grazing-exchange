@@ -56,6 +56,7 @@ export function BrowseListings({
     filters.landType ? LAND_TYPE_LABELS[filters.landType] : null,
     filters.season ? SEASON_LABELS[filters.season] : null,
     filters.onDate ? `on ${filters.onDate}` : null,
+    filters.organicOnly ? "organic only" : null,
   ].filter(Boolean);
 
   function update(next: FilterValues) {
@@ -106,7 +107,7 @@ export function BrowseListings({
             <CardContent className="grid gap-3 text-sm text-muted-foreground">
               <p>
                 {filtering
-                  ? "Nothing in the sample set fits those filters. Clear them, or post the listing you were hoping to find."
+                  ? "Nothing in the demo set fits those filters. Clear them, or post the listing you were hoping to find."
                   : "Be the first to post pasture, a cover crop, or a herd that needs forage."}
               </p>
               <div className="flex flex-wrap gap-2">

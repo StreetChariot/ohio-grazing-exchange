@@ -27,6 +27,7 @@ export function parseFilters(
   const county = one(params.county);
   const region = one(params.state);
   const onDate = one(params.onDate);
+  const organic = one(params.organic);
   return {
     side: asEnum<ListingSide>(one(params.side), LISTING_SIDES),
     state: isServiceState(region) ? region : undefined,
@@ -36,6 +37,7 @@ export function parseFilters(
     landType: asEnum<LandType>(one(params.landType), LAND_TYPES),
     season: asEnum<Season>(one(params.season), SEASONS),
     onDate: onDate && DATE.test(onDate) ? onDate : undefined,
+    organicOnly: organic === "1" || organic === "true" ? true : undefined,
   };
 }
 
@@ -57,6 +59,7 @@ export function matchesListing(listing: Listing, filters: ListingFilters) {
       return false;
     }
   }
+  if (filters.organicOnly && !listing.organicCertified) return false;
   return true;
 }
 
@@ -69,5 +72,6 @@ export function filtersToSearchParams(filters: ListingFilters) {
   if (filters.landType) params.set("landType", filters.landType);
   if (filters.season) params.set("season", filters.season);
   if (filters.onDate) params.set("onDate", filters.onDate);
+  if (filters.organicOnly) params.set("organic", "1");
   return params;
 }

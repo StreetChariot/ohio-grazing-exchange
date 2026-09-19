@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { countyCentroid } from "./counties";
 import { matchesListing } from "./filters";
+import { isDemoListingId } from "./organic";
 import { isServiceState } from "./region";
 import { sampleListings } from "./sample-listings";
 import { isSupabaseConfigured } from "./supabase/env";
@@ -32,6 +33,9 @@ type ListingRow = {
   water_available: boolean | null;
   rate_notes: string | null;
   description: string;
+  organic_certified?: boolean | null;
+  organic_certifier?: string | null;
+  is_demo?: boolean | null;
   owner_id?: string | null;
   contact_name?: string | null;
   contact_email?: string | null;
@@ -68,6 +72,9 @@ function fromRow(row: ListingRow, contact?: ContactRow | null): Listing {
     waterAvailable: row.water_available,
     rateNotes: row.rate_notes,
     description: row.description,
+    organicCertified: Boolean(row.organic_certified),
+    organicCertifier: row.organic_certifier ?? null,
+    isDemo: Boolean(row.is_demo) || isDemoListingId(row.id),
     ownerId: row.owner_id ?? null,
     contactName: contact?.contact_name ?? row.contact_name ?? null,
     contactEmail: contact?.contact_email ?? row.contact_email ?? null,
@@ -98,6 +105,9 @@ function toInsert(listing: Listing) {
     water_available: listing.waterAvailable,
     rate_notes: listing.rateNotes,
     description: listing.description,
+    organic_certified: listing.organicCertified,
+    organic_certifier: listing.organicCertified ? listing.organicCertifier : null,
+    is_demo: listing.isDemo,
     owner_id: listing.ownerId,
   };
 }
@@ -111,6 +121,9 @@ async function readPosted(): Promise<Listing[]> {
       ...listing,
       state: isServiceState(listing.state) ? listing.state : "Ohio",
       ownerId: listing.ownerId ?? null,
+      organicCertified: Boolean(listing.organicCertified),
+      organicCertifier: listing.organicCertifier ?? null,
+      isDemo: Boolean(listing.isDemo) || isDemoListingId(listing.id),
     }));
   } catch {
     return [];
@@ -222,6 +235,7 @@ export async function createListing(input: ListingInput, ownerId: string | null)
     latitude: county.latitude,
     longitude: county.longitude,
     ownerId,
+    isDemo: false,
     createdAt: new Date().toISOString(),
   };
 

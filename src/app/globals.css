@@ -172,8 +172,124 @@
   overflow: hidden;
 }
 
+.forum-prose p {
+  margin: 0 0 0.75em;
+}
+
+.forum-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.forum-prose ul,
+.forum-prose ol {
+  margin: 0 0 0.75em;
+  padding-left: 1.25rem;
+}
+
+.forum-prose blockquote {
+  margin: 0 0 0.75em;
+  border-left: 3px solid var(--border);
+  padding-left: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.forum-prose a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.forum-prose h2,
+.forum-prose h3 {
+  margin: 0.85em 0 0.4em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .intro-collapse {
     transition: none;
+  }
+}
+
+/* Letter-size listing posters for markets / Amish board copies */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.45in;
+  }
+
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    display: block !important;
+    min-height: 0 !important;
+  }
+
+  .listing-sheet {
+    display: block !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0.55rem !important;
+  }
+
+  .listing-canvas {
+    gap: 0.55rem !important;
+  }
+
+  .listing-sidebar {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem !important;
+    margin-top: 0.55rem;
+    break-inside: avoid;
+  }
+
+  .listing-visual-row {
+    break-inside: avoid;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.4rem !important;
+  }
+
+  .listing-visual {
+    min-height: 2.6in !important;
+    max-height: 3in;
+    border-radius: 0.25rem !important;
+  }
+
+  .listing-visual svg {
+    min-height: 2.4in !important;
+  }
+
+  .listing-header h1 {
+    font-size: 1.35rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .listing-details,
+  .listing-sidebar .card,
+  .listing-sidebar [data-slot="card"] {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
   }
 }

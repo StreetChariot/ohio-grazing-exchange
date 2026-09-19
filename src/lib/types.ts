@@ -46,6 +46,12 @@ export type Listing = {
   waterAvailable: boolean | null;
   rateNotes: string | null;
   description: string;
+  /** Certified organic pasture/forage (land) or organic herd (livestock) for this listing only. */
+  organicCertified: boolean;
+  /** USDA NOP accredited certifying agent when organicCertified. */
+  organicCertifier: string | null;
+  /** Seed / sample board listings for browsing before real posts exist. */
+  isDemo: boolean;
   ownerId: string | null;
   contactName: string | null;
   contactEmail: string | null;
@@ -61,6 +67,8 @@ export type ListingFilters = {
   landType?: LandType;
   season?: Season;
   onDate?: string;
+  /** When true, only certified-organic listings. */
+  organicOnly?: boolean;
 };
 
 export type ListingInput = {
@@ -81,6 +89,8 @@ export type ListingInput = {
   waterAvailable: boolean | null;
   rateNotes: string | null;
   description: string;
+  organicCertified: boolean;
+  organicCertifier: string | null;
   contactName: string;
   contactEmail: string;
   contactPhone: string | null;

@@ -17,7 +17,13 @@ import type { Account } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { PRODUCT_NAME } from "@/lib/region";
 
-const links = [{ href: "/listings", label: "Browse" }];
+const links = [
+  { href: "/listings", label: "Browse" },
+  { href: "/education", label: "Education" },
+  { href: "/alliances", label: "Alliances" },
+  { href: "/partners", label: "Partners" },
+  { href: "/forum", label: "Forum" },
+];
 
 function NavLinks({
   onNavigate,
@@ -40,7 +46,9 @@ function NavLinks({
           link.href === "/listings"
             ? pathname === "/listings" ||
               (pathname.startsWith("/listings/") && pathname !== "/listings/new")
-            : pathname === link.href || pathname.startsWith(`${link.href}/`);
+            : link.href === "/forum"
+              ? pathname === "/forum" || pathname.startsWith("/forum/")
+              : pathname === link.href || pathname.startsWith(`${link.href}/`);
         return (
           <Link
             key={link.href}
@@ -89,7 +97,7 @@ function AccountControls({ account }: { account: Account | null }) {
 
 export function SiteHeader({ account }: { account: Account | null }) {
   return (
-    <header className="sticky top-0 z-40 border-b bg-background">
+    <header className="sticky top-0 z-40 border-b bg-background print:hidden">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <ExchangeMark className="size-9 shrink-0" />

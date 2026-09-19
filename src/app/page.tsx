@@ -8,6 +8,7 @@ import {
   INTRO_COOKIE,
   INTRO_DISMISSED,
 } from "@/lib/intro-preference";
+import { ALLIANCE_LIST } from "@/lib/alliances";
 import { listListings } from "@/lib/listings";
 import { MIDWEST_EXCHANGE_STATES } from "@/lib/region";
 
@@ -62,6 +63,39 @@ export default async function HomePage() {
       </section>
 
       <section className="border-y bg-muted/40">
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <h2 className="text-xl font-semibold tracking-tight">Quadrant alliances</h2>
+          <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">
+            Four regional alliances, one for each quadrant of the valley. Join
+            from your account with a home county. Each alliance has its own
+            forum board; badges track confirmed grazes, not listings posted.
+          </p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {ALLIANCE_LIST.map((alliance) => (
+              <Link key={alliance.slug} href={`/alliances/${alliance.slug}`}>
+                <Card className="h-full transition-colors hover:bg-muted/70">
+                  <CardHeader>
+                    <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                      {alliance.compass}
+                    </p>
+                    <CardTitle className="text-base">{alliance.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">{alliance.coverage}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-5">
+            <Button asChild variant="outline">
+              <Link href="/forum">Open the forum</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      <section>
         <div className="mx-auto max-w-6xl px-4 py-12">
           <h2 className="text-xl font-semibold tracking-tight">This side of the bridge</h2>
           <p className="mt-3 max-w-3xl text-sm text-muted-foreground md:text-base">

@@ -36,12 +36,16 @@ yarn-error.log*
 
 # local listing posts when Supabase is not configured
 /data/posted-listings.json
+/data/education-suggestions.json
 
 # vercel
 .vercel
 
 # generated map source downloads
 /scripts/cache
+
+# raw logo downloads (regenerate with npm run logos:fetch)
+/public/org-logos/_raw
 
 # typescript
 *.tsbuildinfo

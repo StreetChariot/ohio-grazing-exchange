@@ -3,6 +3,7 @@
 import { redirect, unstable_rethrow } from "next/navigation";
 import { z } from "zod";
 import { getAccount } from "@/lib/auth";
+import { isCertifierSlug } from "@/lib/certifiers";
 import { isOhioCounty } from "@/lib/counties";
 import { createListing, deleteListing } from "@/lib/listings";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
@@ -49,6 +50,8 @@ const schema = z
     contactName: z.string().trim().min(2, "Add a contact name.").max(80),
     contactEmail: z.string().trim().email("Enter a real email address."),
     contactPhone: z.string().trim().max(30).nullable(),
+    organicCertified: z.boolean(),
+    organicCertifier: z.string(),
   })
   .superRefine((value, ctx) => {
     if (value.availableUntil < value.availableFrom) {
@@ -56,6 +59,13 @@ const schema = z
         code: "custom",
         path: ["availableUntil"],
         message: "The end date has to be on or after the start date.",
+      });
+    }
+    if (value.organicCertified && !isCertifierSlug(value.organicCertifier)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["organicCertifier"],
+        message: "Choose the USDA-accredited certifier for this operation.",
       });
     }
     if (value.side === "land") {
@@ -145,6 +155,8 @@ export async function createListingAction(
     contactName: text(formData, "contactName"),
     contactEmail: text(formData, "contactEmail"),
     contactPhone: phone || null,
+    organicCertified: text(formData, "organicCertified") === "yes",
+    organicCertifier: text(formData, "organicCertifier"),
   });
 
   if (!parsed.success) {
@@ -180,6 +192,12 @@ export async function createListingAction(
         waterAvailable: value.side === "land" ? value.waterAvailable : null,
         rateNotes: value.rateNotes,
         description: value.description,
+        organicCertified: value.organicCertified,
+        organicCertifier: value.organicCertified
+          ? isCertifierSlug(value.organicCertifier)
+            ? value.organicCertifier
+            : null
+          : null,
         contactName: value.contactName,
         contactEmail: value.contactEmail,
         contactPhone: value.contactPhone,

@@ -1,3 +1,4 @@
+import { DEMO_LISTING_OWNER } from "./demo-owners";
 import type { Listing } from "./types";
 
 /** Fictional listings so browse works before anyone posts. Contacts use example.com. */
@@ -71,10 +72,10 @@ const sampleListingRows = [
     headCount: null,
     travelRadiusMiles: null,
     fencing: "none",
-    waterAvailable: true,
-    rateNotes: "Open to a per-head daily rate or a flat field fee.",
+    waterAvailable: false,
+    rateNotes: "Open to a per-head daily rate or a flat field fee. DEMO · no on-site water — bring a tank.",
     description:
-      "Combine finished mid-September. Stalks and some dropped ears. No permanent fence, so the grazier brings polywire and a water tank. A hydrant is at the field edge. Prefer dry cows or stockers that can leave before Christmas.",
+      "Combine finished mid-September. Stalks and some dropped ears. No permanent fence, so the grazier brings polywire and a water tank. Prefer dry cows or stockers that can leave before Christmas.",
     contactName: "Priya Nand",
     contactEmail: "priya.nand@example.com",
     contactPhone: "(740) 555-0164",
@@ -135,12 +136,12 @@ const sampleListingRows = [
   {
     id: "a1000000-0000-4000-8000-000000000006",
     side: "land",
-    title: "Summer annuals after wheat, 40 acres",
+    title: "Orchard floor and edge grass, 40 acres",
     county: "Putnam",
     nearestTown: "Ottawa",
     latitude: 41.02,
     longitude: -84.05,
-    landType: "cover_crop",
+    landType: "other",
     livestockType: "cattle",
     seasons: ["summer", "fall"],
     availableFrom: "2026-08-01",
@@ -152,7 +153,7 @@ const sampleListingRows = [
     waterAvailable: true,
     rateNotes: "Rate is open. Prefer a grazier who plants nothing and brings fence.",
     description:
-      "Sorghum-sudangrass and cowpeas seeded after wheat. Ready for cattle in August and still holding in September. No perimeter fence. Water from a hydrant on the north headland. Need the field clear before we put wheat back in.",
+      "DEMO · Mixed orchard floor and edge grass — classified as other forage for smoke testing. No perimeter fence. Water from a hydrant on the north headland.",
     contactName: "Chris Baum",
     contactEmail: "chris.baum@example.com",
     contactPhone: "(419) 555-0190",
@@ -213,13 +214,13 @@ const sampleListingRows = [
   {
     id: "a1000000-0000-4000-8000-000000000009",
     side: "livestock",
-    title: "22 meat goats for woodland or rough pasture",
+    title: "Heritage hogs for woodland browse",
     county: "Brown",
     nearestTown: "Georgetown",
     latitude: 38.87,
     longitude: -83.9,
     landType: "woodland",
-    livestockType: "goats",
+    livestockType: "other",
     seasons: ["summer", "fall"],
     availableFrom: "2026-06-01",
     availableUntil: "2026-09-30",
@@ -230,7 +231,7 @@ const sampleListingRows = [
     waterAvailable: null,
     rateNotes: "Brush work can offset part of the grazing fee.",
     description:
-      "Kiko-cross does and kids. Good on honeysuckle, multiflora, and cedar edges. We haul portable panels and can stay through September if late browse is still there. Based in Georgetown and willing to drive about 45 miles.",
+      "DEMO · Other livestock type for smoke tests: small heritage hog group suited to woodland edges and mast. Based in Georgetown and willing to drive about 45 miles.",
     contactName: "Lila Crowe",
     contactEmail: "lila.crowe@example.com",
     contactPhone: "(937) 555-0127",
@@ -239,30 +240,30 @@ const sampleListingRows = [
   {
     id: "a1000000-0000-4000-8000-000000000010",
     side: "livestock",
-    title: "8 horses need summer pasture in Knox County",
+    title: "Mixed cattle and sheep need summer grass",
     county: "Knox",
     nearestTown: "Mount Vernon",
     latitude: 40.39,
     longitude: -82.49,
     landType: "pasture",
-    livestockType: "horses",
+    livestockType: "mixed",
     seasons: ["spring", "summer", "fall"],
     availableFrom: "2026-05-01",
     availableUntil: "2026-10-15",
     acres: null,
-    headCount: 8,
+    headCount: 28,
     travelRadiusMiles: 25,
     fencing: null,
     waterAvailable: null,
-    rateNotes: "Monthly board-style rate is fine. We check animals daily.",
+    rateNotes: "Daily mixed-herd rate is fine. We check animals daily.",
     description:
-      "Eight mature riding horses, easy keepers. Looking for shade, water, and a field that is not next to a busy road. We can bring portable fencing if the perimeter is weak. Stay is May through mid-October, within 25 miles of Mount Vernon.",
+      "DEMO · Mixed herd for filter smoke tests: a few dry cows with a small ewe flock. Looking for pasture with water within about 25 miles of Mount Vernon.",
     contactName: "Sam Yeager",
     contactEmail: "sam.yeager@example.com",
     contactPhone: "(740) 555-0108",
     createdAt: "2026-09-16T13:00:00.000Z",
   },
-] satisfies Array<Omit<Listing, "state" | "ownerId">>;
+] satisfies Array<Omit<Listing, "state" | "ownerId" | "organicCertified" | "organicCertifier" | "isDemo">>;
 
 const valleyListingRows = [
   {
@@ -589,16 +590,29 @@ const valleyListingRows = [
     contactPhone: "(304) 555-0104",
     createdAt: "2026-09-15T18:20:00.000Z",
   },
-] satisfies Array<Omit<Listing, "ownerId">>;
+] satisfies Array<Omit<Listing, "ownerId" | "organicCertified" | "organicCertifier" | "isDemo">>;
+
+const ORGANIC_SAMPLE: Record<string, string> = {
+  "a1000000-0000-4000-8000-000000000001": "oeffa",
+  "a1000000-0000-4000-8000-000000000007": "oeffa",
+  "a1000000-0000-4000-8000-000000000011": "pco",
+  "a1000000-0000-4000-8000-000000000015": "kda",
+};
 
 export const sampleListings: Listing[] = [
   ...sampleListingRows.map((listing) => ({
     ...listing,
     state: "Ohio" as const,
-    ownerId: null,
+    ownerId: DEMO_LISTING_OWNER[listing.id] ?? null,
+    organicCertified: listing.id in ORGANIC_SAMPLE,
+    organicCertifier: ORGANIC_SAMPLE[listing.id] ?? null,
+    isDemo: true,
   })),
   ...valleyListingRows.map((listing) => ({
     ...listing,
-    ownerId: null,
+    ownerId: DEMO_LISTING_OWNER[listing.id] ?? null,
+    organicCertified: listing.id in ORGANIC_SAMPLE,
+    organicCertifier: ORGANIC_SAMPLE[listing.id] ?? null,
+    isDemo: true,
   })),
 ];
