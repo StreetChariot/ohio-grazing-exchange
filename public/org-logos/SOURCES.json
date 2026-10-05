@@ -1,0 +1,198 @@
+[
+  {
+    "slug": "usda",
+    "ok": true,
+    "downloadedFrom": "https://www.usda.gov/themes/custom/usda_uswds/img/usda-symbol.svg",
+    "officialSource": "https://www.usda.gov/",
+    "note": null
+  },
+  {
+    "slug": "usda-nop",
+    "ok": true,
+    "downloadedFrom": "https://www.ams.usda.gov/sites/default/files/media/Organic4colorsealJPG.jpg",
+    "officialSource": "https://www.ams.usda.gov/rules-regulations/organic/organic-seal",
+    "note": null
+  },
+  {
+    "slug": "oeffa",
+    "ok": true,
+    "downloadedFrom": "https://grow.oeffa.org/wp-content/uploads/2023/06/oeffalogo.jpg",
+    "officialSource": "https://grow.oeffa.org/",
+    "note": null
+  },
+  {
+    "slug": "sare",
+    "ok": true,
+    "downloadedFrom": "https://www.sare.org/wp-content/themes/sare-theme/assets/images/logos/sare-national.gif",
+    "officialSource": "https://www.sare.org/",
+    "note": null
+  },
+  {
+    "slug": "osu-extension",
+    "ok": true,
+    "downloadedFrom": "https://extension.osu.edu/sites/all/themes/cfaesbase/logo.svg",
+    "officialSource": "https://extension.osu.edu/",
+    "note": null
+  },
+  {
+    "slug": "psu-extension",
+    "ok": true,
+    "downloadedFrom": "https://extension.psu.edu/static/version1789030012/frontend/BlueAcorn/site/en_US/images/logo.svg",
+    "officialSource": "https://extension.psu.edu/",
+    "note": null
+  },
+  {
+    "slug": "uk-extension",
+    "ok": true,
+    "downloadedFrom": "https://commons.wikimedia.org/wiki/Special:FilePath/University_of_Kentucky_logo.svg",
+    "officialSource": "https://brand.uky.edu/our-identity/university-logo",
+    "note": "UK brand mark via Wikimedia (official downloads require campus auth)."
+  },
+  {
+    "slug": "wvu-extension",
+    "ok": true,
+    "downloadedFrom": "https://scm.wvu.edu/uploads/wvu-lockups/wvu-logo__blue--2.0.0.svg",
+    "officialSource": "https://scm.wvu.edu/brand/logo-and-identity-usage/",
+    "note": null
+  },
+  {
+    "slug": "stratford",
+    "ok": true,
+    "downloadedFrom": "https://stratfordecologicalcenter.org/wp-content/uploads/2021/04/logo.png",
+    "officialSource": "https://www.stratfordecologicalcenter.org/",
+    "note": null
+  },
+  {
+    "slug": "organic-valley",
+    "ok": true,
+    "downloadedFrom": "https://www.organicvalley.coop/logo.svg",
+    "officialSource": "https://www.organicvalley.coop/",
+    "note": null
+  },
+  {
+    "slug": "farmers-union",
+    "ok": true,
+    "downloadedFrom": "https://nfu.org/wp-content/uploads/2025/06/Logo.svg",
+    "officialSource": "https://nfu.org/",
+    "note": null
+  },
+  {
+    "slug": "pco",
+    "ok": true,
+    "downloadedFrom": "https://images.squarespace-cdn.com/content/v1/688bab318f83700beea28132/7a3e7ac8-e60c-4bfb-adca-cb0574bbb360/Resized_Site1+Site+Title+Logo.png?format=500w",
+    "officialSource": "https://www.paorganic.org/",
+    "note": null
+  },
+  {
+    "slug": "kda",
+    "ok": true,
+    "downloadedFrom": "https://www.kyagr.com/images/kyagr-logo-2024-LG.png",
+    "officialSource": "https://www.kyagr.com/",
+    "note": null
+  },
+  {
+    "slug": "mosa",
+    "ok": true,
+    "downloadedFrom": "https://mosaorganic.org/images/mosa-logo.svg",
+    "officialSource": "https://mosaorganic.org/",
+    "note": null
+  },
+  {
+    "slug": "ocia",
+    "ok": true,
+    "downloadedFrom": "https://ocia.org/wp-content/uploads/2019/06/logo.png",
+    "officialSource": "https://www.ocia.org/",
+    "note": null
+  },
+  {
+    "slug": "nofa-ny",
+    "ok": true,
+    "downloadedFrom": "https://web.archive.org/web/20241222205843im_/https://nofany.org/wp-content/uploads/2019/10/NOFA_logo.png",
+    "officialSource": "https://nofany.org/",
+    "note": "Official NOFA-NY logo via Internet Archive (live site returns 403 to bots)."
+  },
+  {
+    "slug": "otco",
+    "ok": true,
+    "downloadedFrom": "https://tilth.org/wp-content/themes/tilth-2017/dist/images/tilth-logo.svg",
+    "officialSource": "https://tilth.org/",
+    "note": null
+  },
+  {
+    "slug": "qcs",
+    "ok": true,
+    "downloadedFrom": "https://qcsinfo.org/wp-content/themes/QCS/assets/images/qcs_logo.svg",
+    "officialSource": "https://www.qcsinfo.org/",
+    "note": null
+  },
+  {
+    "slug": "qai",
+    "ok": true,
+    "downloadedFrom": "https://www.qai-inc.com/images/qai_logo.svg",
+    "officialSource": "https://www.qai-inc.com/",
+    "note": null
+  },
+  {
+    "slug": "onecert",
+    "ok": true,
+    "downloadedFrom": "https://onecert.com/images/logo-primary.png",
+    "officialSource": "https://www.onecert.com/",
+    "note": null
+  },
+  {
+    "slug": "nics",
+    "ok": true,
+    "downloadedFrom": "https://www.naturesinternational.com/Images/NICS_Logo-removebg.png",
+    "officialSource": "https://www.naturesinternational.com/",
+    "note": null
+  },
+  {
+    "slug": "scs",
+    "ok": true,
+    "downloadedFrom": "https://www.scsglobalservices.com/themes/global3/images/scsglobalservices_logo.svg",
+    "officialSource": "https://www.scsglobalservices.com/",
+    "note": null
+  },
+  {
+    "slug": "organic-certifiers",
+    "ok": true,
+    "downloadedFrom": "https://static.wixstatic.com/media/77d1b3_32eda7f9a951413bac9d35dec544ddcc~mv2.jpg/v1/fill/w_400,h_380,al_c,q_80,enc_auto/Organic%20Certifiers%20Logo%20black.jpg",
+    "officialSource": "https://www.organiccertifiers.com/",
+    "note": null
+  },
+  {
+    "slug": "mda",
+    "ok": true,
+    "downloadedFrom": "https://mda.maryland.gov/Style%20Library/egov/img/agencyLogoMDA_logo3.png",
+    "officialSource": "https://mda.maryland.gov/",
+    "note": null
+  },
+  {
+    "slug": "vof",
+    "ok": true,
+    "downloadedFrom": "https://vermontorganic.org/sites/default/files/inline-images/VOF_Logo_CMYK_Color.png",
+    "officialSource": "https://vermontorganic.org/",
+    "note": null
+  },
+  {
+    "slug": "mofga",
+    "ok": true,
+    "downloadedFrom": "https://www.mofga.org/wp-content/uploads/2020/11/footer-logo-mofga.png",
+    "officialSource": "https://www.mofga.org/",
+    "note": null
+  },
+  {
+    "slug": "ccof",
+    "ok": true,
+    "downloadedFrom": "https://www.ccof.org/wp-content/uploads/2024/02/ccof-logo.svg",
+    "officialSource": "https://www.ccof.org/",
+    "note": null
+  },
+  {
+    "slug": "americert",
+    "ok": false,
+    "error": "Input file contains unsupported image format",
+    "officialSource": "https://www.americertorganic.info/",
+    "note": "Site hosts only a favicon publicly; text mark remains available as fallback."
+  }
+]
